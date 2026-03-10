@@ -40,9 +40,9 @@ const EDUCATION = [
 
 const SKILLS = [
   {
-    cat: "Cloud",
+    cat: "Cloud - AWS",
     col: "var(--accent)",
-    items: ["AWS", "Azure", "GCP", "CloudFormation", "Pulumi"],
+    items: ["IAM", "EC2", "RDS", "S3", "Lambda", "SageMaker"],
   },
   {
     cat: "DevOps",
@@ -52,12 +52,12 @@ const SKILLS = [
   {
     cat: "Networking",
     col: "var(--accent3)",
-    items: ["BGP/OSPF", "SD-WAN", "Firewall", "VPN", "Load Balancing"],
+    items: ["TCP / IP", "Protocols", "Firewall", "VPN", "Load Balancing","Iot "],
   },
   {
-    cat: "Observability",
+    cat: "Programming & DBMS",
     col: "var(--accent4)",
-    items: ["Prometheus", "Grafana", "ELK", "Datadog", "SLOs"],
+    items: ["Python", "Java", "MERN", "MySql", "Scripting"],
   },
 ];
 
