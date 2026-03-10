@@ -189,7 +189,7 @@ body {
 
 .hero {
   display: grid;
-  grid-template-columns: 0.5fr 0.5fr;
+  grid-template-columns: 1.4fr 0.6fr;
 
   gap: 64px;
   align-items: center;
@@ -202,8 +202,7 @@ body {
   letter-spacing: 2px;
   text-transform: uppercase;
 
-  color: #d8dbe1;
-
+  color: var(--muted);
   margin-bottom: 14px;
 }
 
@@ -218,15 +217,25 @@ body {
   color: var(--accent);
 }
 
-.hero-copy {
+/* .hero-copy {
+  text-align: justify;
   font-size: 18px;
   line-height: 1.8;
 
   color: var(--muted);
 
   max-width: 560px;
-}
+} */
 
+.hero-copy {
+  width: 100%;             /* Poori width cover karne ke liye */
+  max-width: 800px;        /* Bahut zyada lamba na ho jaye (readability ke liye) */
+  text-align: justify;     /* Isse lines dono taraf se barabar ho jayengi */
+  line-height: 1.6;        /* Lines ke beech thoda gap (reading mein easy hoga) */
+  margin: 20px 0;          /* Upar aur niche thoda space */
+  color: var(--muted);
+  font-size: 1.1rem;       /* Thoda bada font size */
+}
 .hero-actions {
   display: flex;
   gap: 14px;

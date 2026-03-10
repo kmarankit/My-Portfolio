@@ -242,10 +242,9 @@ const [sent, setSent] = useState(false);
             </h1>
 
             <p className="hero-copy">
-Focused on architecting high-availability systems and resilient network topologies. I specialize in bridging the gap between raw data and cloud-scale operations.
- From optimizing TCP/IP configurations to implementing Zero-Trust network security, I build environments that are secure by design and scalable by default. 
-Currently deep-diving into AIOps to automate incident response and system observability. Open for full-time engineering roles, technical internships, and infrastructure consulting.            </p>
-
+Hi, I’m Ankit. I hold an MCA in Data Science & IoT, where I spent my academic years building smart devices and deep-diving into Networking. 
+After graduation, I jumped into Full-Stack Development to bring ideas to life on the web. Currently, I’m evolving my skills into DevOps and AI Operations.
+ I love bridging the gap between hardware, code, and the cloud to build things that actually work </p>
             <div className="hero-actions">
               <button className="btn primary" onClick={() => go("Projects")}>
                 View Work
