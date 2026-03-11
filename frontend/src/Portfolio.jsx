@@ -4,7 +4,7 @@ import profileImg from "./assets/PHOTO.jpg";
 import "./Portfolio.css";
 
 const NAV = ["About", "Skills", "Projects", "Education", "Experience", "Certifications", "Resources", "Resume", "Contact"];
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_BASE = import.meta.env.VITE_API_URL || "https://ankit-portfolio-backend-e3y6.onrender.com/";
 const SKILL_COLORS = ["var(--accent)", "var(--accent2)", "var(--accent3)", "var(--accent4)"];
 
 function SectionHeader({ n, label }) {
