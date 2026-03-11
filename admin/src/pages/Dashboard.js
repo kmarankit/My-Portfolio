@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchProjects, addProject, deleteProject, fetchContent, upsertContent } from '../services/api';
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "../firebaseConfig";
-
-
-
 const NAV_SECTIONS = [
   { id: 'photo',       label: 'Photo',        icon: '🖼️'  },
   { id: 'summary',     label: 'Summary',      icon: '📝'  },
