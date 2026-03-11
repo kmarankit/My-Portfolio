@@ -29,6 +29,7 @@ app.add_middleware(
         "http://127.0.0.1:5173",
         "http://localhost:4173",    # Vite preview
         "http://127.0.0.1:4173",
+        "https://kmarankit.netlify.app",
         "https://kmarankit.netlify.app/"
     ],
     allow_credentials=True,
