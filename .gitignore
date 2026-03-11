@@ -1,15 +1,4 @@
-# Python environment
 __pycache__/
-*.py[cod]
-*$py.class
 venv/
-env/
 .env
-
-# OS files
 .DS_Store
-Thumbs.db
-
-# Node (agar frontend bhi wahi hai)
-node_modules/
-dist/
