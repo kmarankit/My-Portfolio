@@ -1,10 +1,24 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 # Look at the name after "as"
 from app.routes.auth import router as auth_router
 from app.routes import auth, projects, content, contact
+from dotenv import load_dotenv
+from motor.motor_asyncio import AsyncIOMotorClient
+
+load_dotenv()
 app = FastAPI()
 
+
+MONGO_URI = os.getenv("MONGO_URI")
+
+if not MONGO_URI:
+    print("❌ Error: MONGO_URI nahi mila!")
+else:
+    print("✅ MongoDB connected successfully!")
+
+client = AsyncIOMotorClient(MONGO_URI)
 # Allow your React Admin Panel to talk to this API
 app.add_middleware(
     CORSMiddleware,

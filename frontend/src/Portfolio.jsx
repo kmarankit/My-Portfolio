@@ -4,7 +4,7 @@ import profileImg from "./assets/PHOTO.jpg";
 import "./Portfolio.css";
 
 const NAV = ["About", "Skills", "Projects", "Education", "Experience", "Certifications", "Resources", "Resume", "Contact"];
-const API_BASE = import.meta.env.VITE_API_URL || "https://ankit-portfolio-backend-e3y6.onrender.com/";
+const API_BASE = (import.meta.env.VITE_API_URL || "https://ankit-portfolio-backend-e3y6.onrender.com").replace(/\/+$/, "");
 const SKILL_COLORS = ["var(--accent)", "var(--accent2)", "var(--accent3)", "var(--accent4)"];
 
 function SectionHeader({ n, label }) {
@@ -94,35 +94,54 @@ const [sent, setSent] = useState(false);
  useEffect(() => {
     const fetchData = async () => {
       try {
-        const [contentRes, reposRes] = await Promise.all([
+        let contentFailed = false;
+        const [contentRes, reposRes] = await Promise.allSettled([
           fetch(`${API_BASE}/content`),
           fetch(`https://api.github.com/users/kmarankit/repos?sort=updated&per_page=100`),
         ]);
 
-        if (!contentRes.ok) throw new Error("Failed to load content");
-        if (!reposRes.ok) throw new Error("Failed to load repos");
-
-        const contentData = await contentRes.json();
-        const reposData = await reposRes.json();
-
-        if (Array.isArray(contentData)) {
-          const next = { ...defaultContent };
-          contentData.forEach((item) => {
-            if (item.section) next[item.section] = item.content;
-          });
-          setContent(next);
+        if (contentRes.status === "fulfilled") {
+          if (!contentRes.value.ok) {
+            contentFailed = true;
+          } else {
+            const contentData = await contentRes.value.json();
+            if (Array.isArray(contentData)) {
+              const next = { ...defaultContent };
+              contentData.forEach((item) => {
+                if (item.section) next[item.section] = item.content;
+              });
+              setContent(next);
+            }
+          }
+        } else {
+          contentFailed = true;
         }
 
-        if (Array.isArray(reposData)) {
-          const codeOnly = reposData.filter(repo =>
-            repo.language !== null &&
-            repo.fork === false &&
-            !repo.name.toLowerCase().includes('pdf') &&
-            !repo.name.toLowerCase().includes('notes')
-          );
-          setRepos(codeOnly.slice(0, 6));
+        if (reposRes.status === "fulfilled") {
+          if (!reposRes.value.ok) {
+            console.error("GitHub fetch error:", reposRes.value.status);
+            setRepos([]);
+          } else {
+            const reposData = await reposRes.value.json();
+            if (Array.isArray(reposData)) {
+              const codeOnly = reposData.filter(repo =>
+                repo.language !== null &&
+                repo.fork === false &&
+                !repo.name.toLowerCase().includes('pdf') &&
+                !repo.name.toLowerCase().includes('notes')
+              );
+              setRepos(codeOnly.slice(0, 6));
+            } else {
+              setRepos([]);
+            }
+          }
         } else {
+          console.error("GitHub fetch error:", reposRes.reason);
           setRepos([]);
+        }
+
+        if (contentFailed) {
+          setError("Unable to load portfolio data.");
         }
       } catch (error) {
         console.error("Portfolio data error:", error);
