@@ -472,10 +472,7 @@ const LivePopup = ({ projects, content, onClearSection, onRemoveItem, onRemovePr
 };
 
 // ── MAIN DASHBOARD ───────────────────────────────────────────────────────────
-const Dashboard = () => {
-  const [projects, setProjects]     = useState([]);
-  const [activeSection, setActiveSection] = useState('summary');
-  const defaultContent = {
+const DEFAULT_CONTENT = {
     photo: { url: '' },
     summary: { description: '' },
     skills: [],
@@ -487,16 +484,20 @@ const Dashboard = () => {
     certif: [],
     resources: [],
     social: { github: '', linkedin: '', twitter: '', instagram: '', youtube: '' },
-  };
-  const defaultDrafts = {
+};
+const DEFAULT_DRAFTS = {
     skill: { category: '', name: '' },
     education: { degree: '', institution: '', year: '', skills: '' },
     experience: { title: '', company: '', duration: '', responsibilities: '' },
     certif: { name: '', org: '', date: '' },
     resource: { type: '', title: '', publication: '', identifier: '', url: '' },
-  };
-  const [content, setContent]       = useState(defaultContent);
-  const [drafts, setDrafts]         = useState(defaultDrafts);
+};
+
+const Dashboard = () => {
+  const [projects, setProjects]     = useState([]);
+  const [activeSection, setActiveSection] = useState('summary');
+  const [content, setContent]       = useState(DEFAULT_CONTENT);
+  const [drafts, setDrafts]         = useState(DEFAULT_DRAFTS);
   const [projectForm, setProjectForm] = useState({ title: '', description: '', tech: '', link: '' });
   const [sidebarOpen, setSidebarOpen] = useState(false);  // desktop: collapsed
   const [showLive, setShowLive]     = useState(false);
@@ -553,7 +554,7 @@ const Dashboard = () => {
         ]);
         setProjects(projectsRes.data);
         if (contentRes.data?.length) {
-          const next = { ...defaultContent };
+          const next = { ...DEFAULT_CONTENT };
           contentRes.data.forEach((item) => {
             if (item.section) next[item.section] = item.content;
           });
@@ -648,9 +649,9 @@ const Dashboard = () => {
   };
 
   const onClearSection = async (section) => {
-    const emptyValue = Array.isArray(defaultContent[section])
+    const emptyValue = Array.isArray(DEFAULT_CONTENT[section])
       ? []
-      : { ...defaultContent[section] };
+      : { ...DEFAULT_CONTENT[section] };
     setContent((prev) => ({ ...prev, [section]: emptyValue }));
     try {
       await upsertContent({ section, content: emptyValue });
