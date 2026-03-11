@@ -32,6 +32,7 @@ app.add_middleware(
         "https://kmarankit.netlify.app",
         "https://kmarankit.netlify.app/"
     ],
+    allow_origin_regex=r"^https://kmarankit\.netlify\.app$",
     allow_credentials=True,
     allow_methods=["*"],              # Allows GET, POST, OPTIONS, etc.
     allow_headers=["*"],              # Allows Content-Type, Authorization, etc.
