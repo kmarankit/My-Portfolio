@@ -12,7 +12,6 @@ const NAV_SECTIONS = [
   { id: 'contact',     label: 'Contact',      icon: '✉️'  },
   { id: 'resume',      label: 'Resume',       icon: '📄'  },
   { id: 'certif',      label: 'Certification',icon: '🏆'  },
-  { id: 'research',   label: 'research',    icon: '📦'  },
   { id: 'social',      label: 'Social Media', icon: '🌐'  },
 ];
 
