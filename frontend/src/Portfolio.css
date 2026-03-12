@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Outfit:wght@300;400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap");
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -15,7 +15,7 @@
   --amber: #f59e0b;
   --violet: #a78bfa;
   --pink: #f472b6;
-  --text: #f0f4ff;
+  --text: #e6edf3;
   --muted: #8892a4;
   --card: rgba(17, 24, 39, 0.8);
 }
@@ -28,7 +28,7 @@ html {
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: "Outfit", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   overflow-x: hidden;
   line-height: 1.6;
 }
@@ -149,7 +149,7 @@ body::before {
 }
 
 .nav-logo {
-  font-family: "Syne", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   font-weight: 800;
   font-size: 1.1rem;
   letter-spacing: 0.12em;
@@ -168,6 +168,11 @@ body::before {
   animation: pulse 2s infinite;
 }
 
+.nav-logo-dot.online {
+  background: #22c55e;
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.9);
+}
+
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
@@ -180,7 +185,7 @@ body::before {
 }
 
 .nav-links button {
-  font-family: "Outfit", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   font-size: 0.8rem;
   font-weight: 500;
   color: var(--muted);
@@ -202,7 +207,7 @@ body::before {
 }
 
 .nav-cta {
-  font-family: "Outfit", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   font-size: 0.8rem;
   font-weight: 600;
   background: var(--teal);
@@ -315,9 +320,28 @@ body::before {
   padding: 56px max(24px, 6vw) 40px;
   max-width: 1200px;
   margin: 0 auto;
+  border-radius: 18px;
 }
 
 .section-first { padding-top: 56px; }
+
+.section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 18px;
+  opacity: 0.6;
+  background: linear-gradient(180deg, rgba(0, 229, 204, 0.06), rgba(0, 0, 0, 0));
+}
+
+.section:nth-of-type(even)::before {
+  background: linear-gradient(180deg, rgba(167, 139, 250, 0.08), rgba(0, 0, 0, 0));
+}
+
+.section:nth-of-type(odd)::before {
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.07), rgba(0, 0, 0, 0));
+}
 
 /* SECTION HEADER */
 .sh {
@@ -325,6 +349,12 @@ body::before {
   align-items: center;
   gap: 16px;
   margin-bottom: 28px;
+  position: sticky;
+  top: 64px;
+  z-index: 5;
+  padding: 10px 0;
+  background: linear-gradient(180deg, rgba(6, 8, 16, 0.95), rgba(6, 8, 16, 0.7));
+  backdrop-filter: blur(10px);
 }
 
 .sh-num {
@@ -343,7 +373,7 @@ body::before {
 }
 
 .sh-label {
-  font-family: "Syne", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   font-size: clamp(1.4rem, 3vw, 2rem);
   font-weight: 800;
   color: var(--text);
@@ -384,7 +414,7 @@ body::before {
 }
 
 .hero-title {
-  font-family: "Syne", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   font-size: clamp(2.4rem, 5.5vw, 4.2rem);
   font-weight: 800;
   line-height: 1;
@@ -488,7 +518,7 @@ body::before {
 }
 
 .hero-stat-val {
-  font-family: "Syne", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   font-size: 1.5rem;
   font-weight: 800;
   color: var(--teal);
@@ -624,7 +654,7 @@ body::before {
 }
 
 .floating-val {
-  font-family: "Syne", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   font-size: 1.4rem;
   font-weight: 800;
   color: var(--text);
@@ -668,7 +698,7 @@ body::before {
 }
 
 .skill-cat {
-  font-family: "Syne", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -773,7 +803,7 @@ body::before {
 }
 
 .project-title {
-  font-family: "Syne", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   font-size: 1.05rem;
   font-weight: 700;
   color: var(--text);
@@ -889,7 +919,7 @@ body::before {
 }
 
 .tl-title {
-  font-family: "Syne", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   font-size: 1.05rem;
   font-weight: 700;
   color: var(--text);
@@ -978,7 +1008,7 @@ body::before {
 }
 
 .research-title {
-  font-family: "Syne", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   font-size: 1rem;
   font-weight: 700;
   color: var(--text);
@@ -1172,7 +1202,7 @@ body::before {
 .resume-icon { font-size: 36px; margin-bottom: 12px; }
 
 .resume-title {
-  font-family: "Syne", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   font-size: 1.4rem;
   font-weight: 800;
   color: var(--text);
@@ -1201,7 +1231,7 @@ body::before {
 }
 
 .contact-info-title {
-  font-family: "Syne", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   font-size: clamp(1.3rem, 2.8vw, 2rem);
   font-weight: 800;
   color: var(--text);
@@ -1274,7 +1304,7 @@ body::before {
 }
 
 .contact-form h3 {
-  font-family: "Syne", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   font-size: 1.1rem;
   font-weight: 700;
   color: var(--text);
@@ -1287,7 +1317,7 @@ body::before {
   border: 1px solid var(--border);
   border-radius: 10px;
   color: var(--text);
-  font-family: "Outfit", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   font-size: 0.9rem;
   padding: 12px 16px;
   outline: none;

@@ -199,8 +199,8 @@ export default function Portfolio() {
       {/* Navbar */}
       <nav className="nav">
         <div className="nav-logo">
-          <span className="nav-logo-dot"/>
-          cloud.network.ai
+          <span className="nav-logo-dot online"/>
+          Open to Work
         </div>
         <div className="nav-links">
           {visibleNav.map(l=>(
