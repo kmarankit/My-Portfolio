@@ -8,10 +8,11 @@ const NAV_SECTIONS = [
   { id: 'projects',    label: 'Projects',     icon: '🚀'  },
   { id: 'education',   label: 'Education',    icon: '🎓'  },
   { id: 'experience',  label: 'Experience',   icon: '💼'  },
+  { id: 'research',    label: 'Research',     icon: '🔬'  },
   { id: 'contact',     label: 'Contact',      icon: '✉️'  },
   { id: 'resume',      label: 'Resume',       icon: '📄'  },
   { id: 'certif',      label: 'Certification',icon: '🏆'  },
-  { id: 'resources',   label: 'Resources',    icon: '📦'  },
+  { id: 'research',   label: 'research',    icon: '📦'  },
   { id: 'social',      label: 'Social Media', icon: '🌐'  },
 ];
 
@@ -257,6 +258,56 @@ const SectionContent = ({
       </Card>
     );
 
+    case 'research': return (
+      <Card title="Add Research Paper">
+        <input
+          placeholder="Paper title"
+          value={drafts.research.title}
+          onChange={(e) => setDrafts((prev) => ({ ...prev, research: { ...prev.research, title: e.target.value } }))}
+          style={inputStyle}
+        />
+        <input
+          placeholder="Conference / Journal"
+          value={drafts.research.conference}
+          onChange={(e) => setDrafts((prev) => ({ ...prev, research: { ...prev.research, conference: e.target.value } }))}
+          style={inputStyle}
+        />
+        <input
+          placeholder="Paper ID"
+          value={drafts.research.paperId}
+          onChange={(e) => setDrafts((prev) => ({ ...prev, research: { ...prev.research, paperId: e.target.value } }))}
+          style={inputStyle}
+        />
+        <textarea
+          placeholder="Short description"
+          rows={3}
+          value={drafts.research.description}
+          onChange={(e) => setDrafts((prev) => ({ ...prev, research: { ...prev.research, description: e.target.value } }))}
+          style={{ ...inputStyle, resize: 'vertical' }}
+        />
+        <input
+          placeholder="Teachers / Mentors"
+          value={drafts.research.teachers}
+          onChange={(e) => setDrafts((prev) => ({ ...prev, research: { ...prev.research, teachers: e.target.value } }))}
+          style={inputStyle}
+        />
+        <button
+          style={btnStyle}
+          onClick={() => onAddItem('research', drafts.research, () => setDrafts((prev) => ({ ...prev, research: { title: '', conference: '', paperId: '', description: '', teachers: '' } })))}
+        >
+          Save Research
+        </button>
+        {(content.research || []).map((r, i) => (
+          <div key={`${r.title}-${i}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
+            <span style={{ color: '#cbd5e1', fontSize: 13 }}>
+              {r.title} • {r.conference}{r.paperId ? ` • ${r.paperId}` : ''}{r.teachers ? ` • ${r.teachers}` : ''}
+            </span>
+            <button style={{ ...btnStyle, width: 80, padding: '6px 10px' }} onClick={() => onRemoveItem('research', i)}>Remove</button>
+          </div>
+        ))}
+      </Card>
+    );
+
     case 'contact': return (
       <Card title="Contact Info">
         <input
@@ -330,8 +381,8 @@ const SectionContent = ({
       </Card>
     );
 
-    case 'resources': return (
-      <Card title="Resources">
+    case 'research': return (
+      <Card title="research">
         <select
           value={drafts.resource.type}
           onChange={(e) => setDrafts((prev) => ({ ...prev, resource: { ...prev.resource, type: e.target.value } }))}
@@ -368,16 +419,16 @@ const SectionContent = ({
         />
         <button
           style={btnStyle}
-          onClick={() => onAddItem('resources', drafts.resource, () => setDrafts((prev) => ({ ...prev, resource: { type: '', title: '', publication: '', identifier: '', url: '' } })))}
+          onClick={() => onAddItem('research', drafts.resource, () => setDrafts((prev) => ({ ...prev, resource: { type: '', title: '', publication: '', identifier: '', url: '' } })))}
         >
           Add Resource
         </button>
-        {(content.resources || []).map((r, i) => (
+        {(content.research || []).map((r, i) => (
           <div key={`${r.title}-${i}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
             <span style={{ color: '#cbd5e1', fontSize: 13 }}>
               {r.type} • {r.title}{r.publication ? ` • ${r.publication}` : ''}{r.identifier ? ` • ${r.identifier}` : ''}
             </span>
-            <button style={{ ...btnStyle, width: 80, padding: '6px 10px' }} onClick={() => onRemoveItem('resources', i)}>Remove</button>
+            <button style={{ ...btnStyle, width: 80, padding: '6px 10px' }} onClick={() => onRemoveItem('research', i)}>Remove</button>
           </div>
         ))}
       </Card>
@@ -474,7 +525,7 @@ const LivePopup = ({ projects, content, onClearSection, onRemoveItem, onRemovePr
           { id: 'education', label: 'Education' },
           { id: 'experience', label: 'Experience' },
           { id: 'certif', label: 'Certifications' },
-          { id: 'resources', label: 'Resources' },
+          { id: 'research', label: 'research' },
         ].map(group => (
           <div key={group.id} style={{ marginBottom: 24 }}>
             <h4 style={{ color: '#94a3b8', fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 12px' }}>{group.label}</h4>
@@ -535,16 +586,18 @@ const DEFAULT_CONTENT = {
     projects: [],
     education: [],
     experience: [],
+    research: [],
     contact: { email: '', phone: '', location: '' },
     resume: { url: '' },
     certif: [],
-    resources: [],
+    research: [],
     social: { github: '', linkedin: '', twitter: '', instagram: '', youtube: '' },
 };
 const DEFAULT_DRAFTS = {
     skill: { category: '', name: '' },
     education: { degree: '', institution: '', startDate: '', endDate: '', skills: '' },
     experience: { title: '', company: '', duration: '', responsibilities: '' },
+    research: { title: '', conference: '', paperId: '', description: '', teachers: '' },
     certif: { name: '', org: '', date: '' },
     resource: { type: '', title: '', publication: '', identifier: '', url: '' },
 };
