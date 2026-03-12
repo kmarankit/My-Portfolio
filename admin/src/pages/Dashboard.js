@@ -620,7 +620,7 @@ const Dashboard = () => {
     if (!file) return;
 
     const cloudName = "dokway92z"; // Aapka latest cloud name
-    const uploadPreset = "portfolio_preset"; // Jo aapne abhi banaya
+    const uploadPreset = section === "resume" ? "portfolio_resume" : "portfolio_preset";
 
     const formData = new FormData();
     formData.append("file", file);

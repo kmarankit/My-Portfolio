@@ -140,9 +140,7 @@ export default function Portfolio() {
   const resumeUrl = content.resume?.url || "";
   const normalizedResumeUrl = resumeUrl.includes("/image/upload/")
     ? resumeUrl.replace("/image/upload/", "/image/upload/fl_attachment/")
-    : resumeUrl.includes("/raw/upload/")
-      ? resumeUrl.replace("/raw/upload/", "/raw/upload/fl_attachment/")
-      : resumeUrl;
+    : resumeUrl;
   const vis = {
     About:true,
     Skills:(content.skills||[]).length>0,
@@ -465,7 +463,7 @@ export default function Portfolio() {
               <div className="resume-icon">📄</div>
               <div className="resume-title">My Resume</div>
               <div className="resume-sub">Download my complete resume to learn more about my background, skills, and experience.</div>
-              <a className="btn-primary resume-link" href={normalizedResumeUrl} target="_blank" rel="noreferrer" onClick={handleResumeClick}>
+              <a className="btn-primary resume-link" href={normalizedResumeUrl} target="_blank" rel="noreferrer" onClick={handleResumeClick} download>
                 Download Resume ↓
               </a>
             </div>
