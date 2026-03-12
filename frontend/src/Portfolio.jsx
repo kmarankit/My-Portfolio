@@ -7,6 +7,13 @@ const NAV = ["About", "Skills", "Projects", "Education", "Experience", "Certific
 const API_BASE = (import.meta.env.VITE_API_URL || "https://ankit-portfolio-backend-e3y6.onrender.com").replace(/\/+$/, "");
 const SKILL_COLORS = ["var(--accent)", "var(--accent2)", "var(--accent3)", "var(--accent4)"];
 
+const formatEducationRange = (edu) => {
+  const start = edu?.startDate || edu?.start || edu?.from || "";
+  const end = edu?.endDate || edu?.end || edu?.to || "";
+  if (start || end) return `${start}${end ? ` - ${end}` : " - Present"}`;
+  return edu?.year || "";
+};
+
 function SectionHeader({ n, label }) {
   return (
     <div className="sh">
@@ -361,7 +368,7 @@ const [sent, setSent] = useState(false);
                   </div>
 
                   <div className="row">
-                    <span className="chip">{edu.year}</span>
+                    <span className="chip">{formatEducationRange(edu)}</span>
                   </div>
 
                   {edu.skills && (

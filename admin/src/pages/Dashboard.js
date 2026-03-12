@@ -15,6 +15,20 @@ const NAV_SECTIONS = [
   { id: 'social',      label: 'Social Media', icon: '🌐'  },
 ];
 
+const TAG_COLORS = ['#22c55e', '#38bdf8', '#a78bfa', '#f59e0b', '#f472b6', '#60a5fa'];
+
+const parseCommaList = (value) => String(value || '')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+const formatEducationRange = (edu) => {
+  const start = edu?.startDate || edu?.start || edu?.from || '';
+  const end = edu?.endDate || edu?.end || edu?.to || '';
+  if (start || end) return `${start}${end ? ` - ${end}` : ' - Present'}`;
+  return edu?.year || '';
+};
+
 // ── tiny reusable card ───────────────────────────────────────────────────────
 const Card = ({ title, children }) => (
   <div style={{
@@ -41,6 +55,7 @@ const SectionContent = ({
   onSaveSection,
   onAddItem,
   onRemoveItem,
+  onRemoveSkillCategory,
   onAddProject,
   handleFileUpload,
   isLive,
@@ -87,7 +102,7 @@ const SectionContent = ({
           style={inputStyle}
         />
         <input
-          placeholder="Skill name (e.g. React)"
+          placeholder="Skill names (comma separated, e.g. React, Node)"
           value={drafts.skill.name}
           onChange={(e) => setDrafts((prev) => ({ ...prev, skill: { ...prev.skill, name: e.target.value } }))}
           style={inputStyle}
@@ -98,10 +113,20 @@ const SectionContent = ({
         >
           Add Skill
         </button>
-        {(content.skills || []).map((s, i) => (
-          <div key={`${s.name}-${i}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
-            <span style={{ color: '#cbd5e1', fontSize: 13 }}>{s.category} • {s.name}</span>
-            <button style={{ ...btnStyle, width: 80, padding: '6px 10px' }} onClick={() => onRemoveItem('skills', i)}>Remove</button>
+        {Object.entries((content.skills || []).reduce((acc, s) => {
+          const category = (s.category || 'Uncategorized').trim() || 'Uncategorized';
+          if (!acc[category]) acc[category] = [];
+          if (s.name) acc[category].push(s.name);
+          return acc;
+        }, {})).map(([category, names]) => (
+          <div key={category} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
+            <span style={{ color: '#cbd5e1', fontSize: 13 }}>{category} • {names.join(', ')}</span>
+            <button
+              style={{ ...btnStyle, width: 90, padding: '6px 10px' }}
+              onClick={() => onRemoveSkillCategory(category)}
+            >
+              Remove All
+            </button>
           </div>
         ))}
       </Card>
@@ -131,13 +156,22 @@ const SectionContent = ({
           onChange={(e) => setDrafts((prev) => ({ ...prev, education: { ...prev.education, institution: e.target.value } }))}
           style={inputStyle}
         />
-        <input
-          type="month"
-          placeholder="Year (e.g. 2020-2024)"
-          value={drafts.education.year}
-          onChange={(e) => setDrafts((prev) => ({ ...prev, education: { ...prev.education, year: e.target.value } }))}
-          style={inputStyle}
-        />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <input
+            type="month"
+            placeholder="Start (YYYY-MM)"
+            value={drafts.education.startDate}
+            onChange={(e) => setDrafts((prev) => ({ ...prev, education: { ...prev.education, startDate: e.target.value } }))}
+            style={inputStyle}
+          />
+          <input
+            type="month"
+            placeholder="End (YYYY-MM)"
+            value={drafts.education.endDate}
+            onChange={(e) => setDrafts((prev) => ({ ...prev, education: { ...prev.education, endDate: e.target.value } }))}
+            style={inputStyle}
+          />
+        </div>
         <input
           placeholder="Skills learned (comma separated)"
           value={drafts.education.skills}
@@ -146,14 +180,36 @@ const SectionContent = ({
         />
         <button
           style={btnStyle}
-          onClick={() => onAddItem('education', drafts.education, () => setDrafts((prev) => ({ ...prev, education: { degree: '', institution: '', year: '', skills: '' } })))}
+          onClick={() => onAddItem('education', drafts.education, () => setDrafts((prev) => ({ ...prev, education: { degree: '', institution: '', startDate: '', endDate: '', skills: '' } })))}
         >
           Save Education
         </button>
         {(content.education || []).map((e, i) => (
-          <div key={`${e.degree}-${i}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
-            <span style={{ color: '#cbd5e1', fontSize: 13 }}>{e.degree} • {e.institution} • {e.year}{e.skills ? ` • ${e.skills}` : ''}</span>
-            <button style={{ ...btnStyle, width: 80, padding: '6px 10px' }} onClick={() => onRemoveItem('education', i)}>Remove</button>
+          <div key={`${e.degree}-${i}`} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, marginTop: 10 }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ color: '#cbd5e1', fontSize: 13 }}>
+                {e.degree} • {e.institution}{formatEducationRange(e) ? ` • ${formatEducationRange(e)}` : ''}
+              </div>
+              {parseCommaList(e.skills).length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 6 }}>
+                  {parseCommaList(e.skills).map((skill, idx) => (
+                    <span
+                      key={`${skill}-${idx}`}
+                      style={{
+                        border: `1px solid ${TAG_COLORS[idx % TAG_COLORS.length]}`,
+                        color: '#e2e8f0',
+                        padding: '4px 8px',
+                        borderRadius: 999,
+                        fontSize: 12,
+                      }}
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+            <button style={{ ...btnStyle, width: 80, padding: '6px 10px', alignSelf: 'flex-start' }} onClick={() => onRemoveItem('education', i)}>Remove</button>
           </div>
         ))}
       </Card>
@@ -487,7 +543,7 @@ const DEFAULT_CONTENT = {
 };
 const DEFAULT_DRAFTS = {
     skill: { category: '', name: '' },
-    education: { degree: '', institution: '', year: '', skills: '' },
+    education: { degree: '', institution: '', startDate: '', endDate: '', skills: '' },
     experience: { title: '', company: '', duration: '', responsibilities: '' },
     certif: { name: '', org: '', date: '' },
     resource: { type: '', title: '', publication: '', identifier: '', url: '' },
@@ -620,17 +676,35 @@ const Dashboard = () => {
   };
 
   const onAddItem = async (section, item, resetDraft) => {
-    const hasValue = Object.values(item || {}).some((v) => String(v || '').trim().length > 0);
+    let itemsToAdd = [item];
+    if (section === 'skills') {
+      const category = String(item?.category || '').trim();
+      const names = parseCommaList(item?.name);
+      itemsToAdd = names.map((name) => ({ category, name }));
+    }
+
+    const hasValue = itemsToAdd.some((it) => Object.values(it || {}).some((v) => String(v || '').trim().length > 0));
     if (!hasValue) {
       alert('Please fill at least one field.');
       return;
     }
 
-    const updated = [...(content[section] || []), item];
+    const updated = [...(content[section] || []), ...itemsToAdd];
     setContent((prev) => ({ ...prev, [section]: updated }));
     if (resetDraft) resetDraft();
     try {
       await upsertContent({ section, content: updated });
+    } catch (err) {
+      console.error('Save failed:', err);
+      alert('Error saving data. Check backend connection.');
+    }
+  };
+
+  const onRemoveSkillCategory = async (category) => {
+    const updated = (content.skills || []).filter((s) => (s.category || 'Uncategorized').trim() !== category);
+    setContent((prev) => ({ ...prev, skills: updated }));
+    try {
+      await upsertContent({ section: 'skills', content: updated });
     } catch (err) {
       console.error('Save failed:', err);
       alert('Error saving data. Check backend connection.');
@@ -889,6 +963,7 @@ const Dashboard = () => {
                 onSaveSection={onSaveSection}
                 onAddItem={onAddItem}
                 onRemoveItem={onRemoveItem}
+                onRemoveSkillCategory={onRemoveSkillCategory}
                 onAddProject={onAddProject}
                 handleFileUpload={handleFileUpload}
                 isLive={publishedProjects.length > 0}
