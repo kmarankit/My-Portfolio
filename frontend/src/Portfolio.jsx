@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import profileImg from "./assets/PHOTO.jpg";
+import "./Portfolio.css";
 
 const NAV = ["About","Skills","Projects","Education","Experience","Research","Certifications","Resources","Resume","Contact"];
 const API_BASE = (import.meta.env?.VITE_API_URL || "https://ankit-portfolio-backend-e3y6.onrender.com").replace(/\/+$/, "");
-const SKILL_COLORS = ["#00e5cc","#f59e0b","#a78bfa","#f472b6","#34d399","#60a5fa"];
-const TAG_COLORS   = ["#00e5cc","#f59e0b","#a78bfa","#f472b6","#34d399","#60a5fa"];
+const SKILL_COLOR_COUNT = 6;
+const TAG_COLOR_COUNT = 6;
 
 const parseCommaList = v => String(v||'').split(',').map(s=>s.trim()).filter(Boolean);
 const formatEduRange = edu => {
@@ -13,447 +14,6 @@ const formatEduRange = edu => {
   if(s||e) return `${s}${e?` — ${e}`:" — Present"}`;
   return edu?.year||"";
 };
-
-/* ── Fonts ─────────────────────────────────────────────────────────── */
-const FontLink = () => (
-  <style>{`@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Outfit:wght@300;400;500;600&display=swap');`}</style>
-);
-
-/* ── Global CSS ─────────────────────────────────────────────────────── */
-const GlobalStyles = () => (
-  <style>{`
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{
-      --bg:#060810;
-      --surface:#0d1117;
-      --surface2:#111827;
-      --border:rgba(255,255,255,0.07);
-      --teal:#00e5cc;
-      --amber:#f59e0b;
-      --violet:#a78bfa;
-      --pink:#f472b6;
-      --text:#f0f4ff;
-      --muted:#8892a4;
-      --card:rgba(17,24,39,0.8);
-    }
-    html{scroll-behavior:smooth;font-size:16px}
-    body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;overflow-x:hidden;line-height:1.6}
-    ::selection{background:rgba(0,229,204,0.25);color:#fff}
-    ::-webkit-scrollbar{width:4px}
-    ::-webkit-scrollbar-track{background:var(--bg)}
-    ::-webkit-scrollbar-thumb{background:var(--teal);border-radius:2px}
-    a{color:inherit;text-decoration:none}
-    img{max-width:100%;display:block}
-    button{cursor:pointer;font-family:inherit;border:none;background:none}
-
-    /* noise overlay */
-    body::before{
-      content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-      opacity:0.4;
-    }
-
-    /* Gradient orbs */
-    .orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(120px);opacity:0.15}
-    .orb-1{width:600px;height:600px;background:radial-gradient(circle,#00e5cc,transparent);top:-100px;right:-150px;animation:drift1 20s ease-in-out infinite}
-    .orb-2{width:500px;height:500px;background:radial-gradient(circle,#a78bfa,transparent);bottom:200px;left:-200px;animation:drift2 25s ease-in-out infinite}
-    .orb-3{width:400px;height:400px;background:radial-gradient(circle,#f59e0b,transparent);top:60%;right:10%;animation:drift3 18s ease-in-out infinite}
-
-    @keyframes drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(-60px,80px)}}
-    @keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(80px,-60px)}}
-    @keyframes drift3{0%,100%{transform:translate(0,0)}50%{transform:translate(-40px,50px)}}
-
-    /* NAVBAR */
-    .nav{
-      position:fixed;top:0;left:0;right:0;z-index:100;
-      padding:0 max(24px,5vw);height:64px;
-      display:flex;align-items:center;justify-content:space-between;
-      background:rgba(6,8,16,0.7);
-      backdrop-filter:blur(20px) saturate(180%);
-      border-bottom:1px solid var(--border);
-    }
-    .nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;letter-spacing:0.12em;color:var(--text);display:flex;align-items:center;gap:8px}
-    .nav-logo-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 12px var(--teal);animation:pulse 2s infinite}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-    .nav-links{display:flex;gap:2px;align-items:center}
-    .nav-links button{
-      font-family:'Outfit',sans-serif;font-size:0.8rem;font-weight:500;
-      color:var(--muted);padding:6px 12px;border-radius:6px;
-      transition:all 0.2s;letter-spacing:0.04em;text-transform:uppercase;
-    }
-    .nav-links button:hover{color:var(--text);background:rgba(255,255,255,0.05)}
-    .nav-links button.active{color:var(--teal);background:rgba(0,229,204,0.08)}
-    .nav-cta{
-      font-family:'Outfit',sans-serif;font-size:0.8rem;font-weight:600;
-      background:var(--teal);color:#060810;padding:8px 20px;border-radius:8px;
-      letter-spacing:0.06em;text-transform:uppercase;
-      transition:all 0.2s;box-shadow:0 0 20px rgba(0,229,204,0.3);
-    }
-    .nav-cta:hover{transform:translateY(-1px);box-shadow:0 4px 28px rgba(0,229,204,0.5)}
-
-    /* HAMBURGER */
-    .hamburger{display:none;flex-direction:column;gap:5px;padding:8px;width:40px;height:40px;justify-content:center;align-items:center;border-radius:8px;background:rgba(255,255,255,0.05)}
-    .hamburger span{display:block;height:2px;background:var(--text);border-radius:1px;transition:all 0.3s}
-    .hamburger span:nth-child(1){width:20px}
-    .hamburger span:nth-child(2){width:14px}
-    .hamburger span:nth-child(3){width:17px}
-
-    /* MOBILE DRAWER */
-    .mob-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px)}
-    .mob-drawer{
-      position:fixed;top:0;right:0;bottom:0;z-index:201;width:260px;
-      background:var(--surface);border-left:1px solid var(--border);
-      padding:80px 24px 40px;display:flex;flex-direction:column;gap:4px;
-      transform:translateX(100%);transition:transform 0.35s cubic-bezier(.4,0,.2,1);
-    }
-    .mob-drawer.open{transform:translateX(0)}
-    .mob-drawer button{
-      font-size:1rem;font-weight:500;color:var(--muted);padding:12px 16px;
-      border-radius:8px;text-align:left;transition:all 0.2s;
-    }
-    .mob-drawer button:hover,.mob-drawer button.active{color:var(--teal);background:rgba(0,229,204,0.06)}
-    .mob-close{position:absolute;top:18px;right:18px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:rgba(255,255,255,0.06);color:var(--muted);font-size:18px}
-
-    /* SECTION */
-    .section{
-      position:relative;z-index:1;
-      padding:56px max(24px,6vw) 40px;
-      max-width:1200px;margin:0 auto;
-    }
-    .section-first{padding-top:56px}
-
-    /* SECTION HEADER */
-    .sh{display:flex;align-items:center;gap:16px;margin-bottom:28px}
-    .sh-num{font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--teal);letter-spacing:0.1em;opacity:0.7}
-    .sh-bar{flex:1;height:1px;background:linear-gradient(90deg,var(--teal),transparent);opacity:0.3}
-    .sh-label{
-      font-family:'Syne',sans-serif;font-size:clamp(1.4rem,3vw,2rem);
-      font-weight:800;color:var(--text);letter-spacing:-0.02em;
-    }
-
-    /* HERO */
-    .hero{
-      min-height:auto;
-      display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;
-      padding:80px max(24px,6vw) 40px;max-width:1200px;margin:0 auto;
-    }
-    .hero-kicker{
-      display:inline-flex;align-items:center;gap:8px;
-      font-family:'DM Mono',monospace;font-size:0.75rem;letter-spacing:0.12em;
-      color:var(--teal);text-transform:uppercase;margin-bottom:14px;
-      padding:5px 12px;border:1px solid rgba(0,229,204,0.25);border-radius:4px;
-      background:rgba(0,229,204,0.05);
-    }
-    .hero-title{
-      font-family:'Syne',sans-serif;
-      font-size:clamp(2.4rem,5.5vw,4.2rem);
-      font-weight:800;line-height:1;letter-spacing:-0.03em;
-      color:var(--text);margin-bottom:14px;
-    }
-    .hero-title span{
-      display:block;
-      background:linear-gradient(120deg,var(--teal) 0%,#7de8ff 50%,var(--violet) 100%);
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-    }
-    .hero-copy{font-size:0.95rem;color:var(--muted);line-height:1.65;margin-bottom:16px;max-width:480px}
-    .hero-badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
-    .hero-badge{
-      font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.07em;
-      color:var(--muted);padding:4px 10px;border-radius:3px;
-      border:1px solid var(--border);background:rgba(255,255,255,0.02);
-    }
-    .hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px}
-    .btn-primary{
-      font-weight:600;font-size:0.88rem;letter-spacing:0.06em;text-transform:uppercase;
-      background:var(--teal);color:#060810;padding:12px 28px;border-radius:8px;
-      transition:all 0.2s;box-shadow:0 0 24px rgba(0,229,204,0.35);
-    }
-    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 32px rgba(0,229,204,0.55)}
-    .btn-outline{
-      font-weight:600;font-size:0.88rem;letter-spacing:0.06em;text-transform:uppercase;
-      background:transparent;color:var(--text);padding:12px 28px;border-radius:8px;
-      border:1px solid var(--border);transition:all 0.2s;
-    }
-    .btn-outline:hover{border-color:var(--teal);color:var(--teal);background:rgba(0,229,204,0.05)}
-    .hero-stats{
-      display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
-      border:1px solid var(--border);border-radius:12px;overflow:hidden;
-      background:var(--border);
-    }
-    .hero-stat{
-      background:var(--surface);padding:14px 12px;text-align:center;
-    }
-    .hero-stat-val{
-      font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;
-      color:var(--teal);line-height:1;margin-bottom:4px;
-    }
-    .hero-stat-lbl{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase}
-
-    /* PROFILE CARD */
-    .profile-wrap{position:relative;display:flex;flex-direction:column;gap:20px;align-items:flex-end}
-    .profile-card{
-      position:relative;border-radius:20px;overflow:hidden;
-      border:1px solid var(--border);
-      background:linear-gradient(135deg,var(--surface),var(--surface2));
-      box-shadow:0 32px 64px rgba(0,0,0,0.5),0 0 0 1px var(--border);
-    }
-    .profile-card img{width:100%;max-width:380px;aspect-ratio:4/5;object-fit:cover;display:block;filter:contrast(1.05)}
-    .profile-card::after{
-      content:'';position:absolute;inset:0;
-      background:linear-gradient(180deg,transparent 50%,rgba(6,8,16,0.9) 100%);
-    }
-    .profile-chip{
-      position:absolute;z-index:2;
-      font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;
-      text-transform:uppercase;padding:5px 12px;border-radius:4px;
-    }
-    .chip-cloud{
-      top:16px;left:16px;
-      background:rgba(0,229,204,0.15);color:var(--teal);
-      border:1px solid rgba(0,229,204,0.3);
-    }
-    .chip-ai{
-      top:16px;right:16px;
-      background:rgba(167,139,250,0.15);color:var(--violet);
-      border:1px solid rgba(167,139,250,0.3);
-    }
-    .profile-status{
-      position:absolute;bottom:20px;left:20px;right:20px;z-index:2;
-      background:rgba(6,8,16,0.8);backdrop-filter:blur(12px);
-      border:1px solid var(--border);border-radius:10px;padding:14px 16px;
-    }
-    .status-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0}
-    .status-row span{font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace}
-    .status-row strong{font-size:0.78rem;color:var(--text);font-weight:500}
-    .profile-floating{
-      position:absolute;top:50%;right:-28px;transform:translateY(-50%);
-      background:var(--surface2);border:1px solid var(--border);
-      border-radius:12px;padding:14px 16px;width:160px;
-      box-shadow:0 16px 40px rgba(0,0,0,0.4);
-    }
-    .floating-label{font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--teal);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px}
-    .floating-val{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--text)}
-    .floating-sub{font-size:0.7rem;color:var(--muted);margin-top:2px}
-
-    /* SKILLS */
-    .skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
-    .skill-card{
-      background:var(--card);border:1px solid var(--border);border-radius:16px;
-      padding:24px;transition:all 0.3s;position:relative;overflow:hidden;
-    }
-    .skill-card::before{
-      content:'';position:absolute;inset:0;
-      background:linear-gradient(135deg,rgba(255,255,255,0.02),transparent);
-      pointer-events:none;
-    }
-    .skill-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,0.14);box-shadow:0 20px 40px rgba(0,0,0,0.3)}
-    .skill-cat{font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:16px}
-    .skill-pills{display:flex;flex-wrap:wrap;gap:8px}
-    .skill-pill{font-size:0.75rem;padding:5px 12px;border-radius:20px;border:1px solid;font-weight:500;letter-spacing:0.03em;transition:all 0.2s}
-    .skill-pill:hover{transform:scale(1.05)}
-
-    /* PROJECTS */
-    .projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
-    .project-card{
-      background:var(--card);border:1px solid var(--border);border-radius:16px;
-      padding:24px 24px 20px;transition:all 0.3s;position:relative;overflow:hidden;
-      display:flex;flex-direction:column;gap:12px;
-    }
-    .project-card::after{
-      content:'';position:absolute;top:0;left:0;right:0;height:2px;
-      background:linear-gradient(90deg,var(--teal),transparent);
-      opacity:0;transition:opacity 0.3s;
-    }
-    .project-card:hover{transform:translateY(-4px);border-color:rgba(0,229,204,0.2);box-shadow:0 20px 40px rgba(0,0,0,0.35)}
-    .project-card:hover::after{opacity:1}
-    .project-lang{
-      display:inline-flex;align-items:center;gap:6px;
-      font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.08em;
-      color:var(--teal);text-transform:uppercase;padding:4px 10px;
-      background:rgba(0,229,204,0.08);border-radius:4px;width:fit-content;
-    }
-    .project-lang::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--teal);box-shadow:0 0 8px var(--teal)}
-    .project-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;color:var(--text)}
-    .project-desc{font-size:0.85rem;color:var(--muted);line-height:1.6;flex:1}
-    .project-footer{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border)}
-    .project-date{font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--muted)}
-    .project-link{
-      font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.06em;
-      color:var(--teal);padding:5px 12px;border:1px solid rgba(0,229,204,0.3);
-      border-radius:5px;transition:all 0.2s;
-    }
-    .project-link:hover{background:rgba(0,229,204,0.1);color:#fff}
-
-    /* TIMELINE (edu/exp) */
-    .timeline{display:flex;flex-direction:column;gap:0}
-    .tl-item{display:grid;grid-template-columns:100px 1fr;gap:0 32px;position:relative;padding-bottom:24px}
-    .tl-item:last-child{padding-bottom:0}
-    .tl-left{text-align:right;padding-top:4px}
-    .tl-date{font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);line-height:1.5}
-    .tl-line{
-      position:absolute;left:100px;top:0;bottom:0;width:1px;
-      background:linear-gradient(180deg,var(--border),transparent);
-    }
-    .tl-dot{
-      position:absolute;left:91px;top:6px;width:18px;height:18px;border-radius:50%;
-      background:var(--surface);border:2px solid;
-      display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:900;
-    }
-    .tl-right{padding-left:32px}
-    .tl-card{
-      background:var(--card);border:1px solid var(--border);border-radius:12px;
-      padding:14px 18px;transition:all 0.3s;
-    }
-    .tl-card:hover{border-color:rgba(255,255,255,0.12);transform:translateX(4px)}
-    .tl-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:4px}
-    .tl-sub{font-size:0.85rem;color:var(--muted);margin-bottom:10px}
-    .tl-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-    .tl-chip{font-size:0.7rem;padding:3px 10px;border-radius:20px;border:1px solid;font-weight:500}
-
-    /* RESEARCH */
-    .research-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
-    .research-card{
-      background:var(--card);border:1px solid var(--border);border-radius:16px;
-      padding:26px;transition:all 0.3s;position:relative;overflow:hidden;
-    }
-    .research-card::before{
-      content:'';position:absolute;top:-60px;right:-60px;width:160px;height:160px;
-      border-radius:50%;background:radial-gradient(circle,rgba(167,139,250,0.1),transparent);
-    }
-    .research-card:hover{transform:translateY(-4px);border-color:rgba(167,139,250,0.25)}
-    .research-tag{
-      font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;
-      text-transform:uppercase;color:var(--violet);
-      padding:4px 10px;background:rgba(167,139,250,0.1);border-radius:4px;
-      width:fit-content;margin-bottom:14px;
-    }
-    .research-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--text);margin-bottom:10px;line-height:1.4}
-    .research-id{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--amber);margin-bottom:10px}
-    .research-desc{font-size:0.83rem;color:var(--muted);line-height:1.6;margin-bottom:14px}
-    .research-meta{display:flex;flex-wrap:wrap;gap:8px}
-    .research-chip{font-size:0.72rem;padding:4px 10px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:20px;color:var(--muted)}
-
-    /* CERTS */
-    .certs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
-    .cert-card{
-      background:var(--card);border:1px solid var(--border);border-radius:14px;
-      padding:20px;transition:all 0.3s;display:flex;gap:16px;align-items:flex-start;
-    }
-    .cert-card:hover{border-color:rgba(245,158,11,0.3);transform:translateY(-2px)}
-    .cert-icon{
-      width:42px;height:42px;border-radius:10px;flex-shrink:0;
-      background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.25);
-      display:flex;align-items:center;justify-content:center;font-size:18px;
-    }
-    .cert-org{font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--amber);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px}
-    .cert-name{font-size:0.9rem;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:4px}
-    .cert-date{font-size:0.75rem;color:var(--muted)}
-
-    /* RESOURCES */
-    .resources-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
-    .resource-card{
-      background:var(--card);border:1px solid var(--border);border-radius:14px;
-      padding:18px 20px;display:flex;gap:14px;align-items:flex-start;transition:all 0.3s;
-    }
-    .resource-card:hover{border-color:rgba(0,229,204,0.2);transform:translateY(-2px)}
-    .resource-kind{
-      width:38px;height:38px;border-radius:8px;flex-shrink:0;display:flex;
-      align-items:center;justify-content:center;font-size:15px;font-weight:700;
-      font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.06em;
-    }
-    .kind-pdf{background:rgba(244,114,182,0.12);color:var(--pink);border:1px solid rgba(244,114,182,0.25)}
-    .kind-notes{background:rgba(0,229,204,0.1);color:var(--teal);border:1px solid rgba(0,229,204,0.25)}
-    .resource-name{font-size:0.88rem;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:4px}
-    .resource-repo{font-size:0.72rem;color:var(--muted);margin-bottom:8px}
-    .resource-link{font-size:0.72rem;color:var(--teal);font-family:'DM Mono',monospace}
-    .resource-link:hover{text-decoration:underline}
-
-    /* RESUME */
-    .resume-section{text-align:center;padding:80px max(24px,6vw);max-width:600px;margin:0 auto}
-    .resume-card{
-      background:var(--card);border:1px solid var(--border);border-radius:20px;
-      padding:36px 32px;position:relative;overflow:hidden;
-    }
-    .resume-card::before{
-      content:'';position:absolute;inset:0;
-      background:linear-gradient(135deg,rgba(0,229,204,0.03),transparent);
-    }
-    .resume-icon{font-size:36px;margin-bottom:12px}
-    .resume-title{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--text);margin-bottom:8px}
-    .resume-sub{font-size:0.88rem;color:var(--muted);margin-bottom:24px}
-
-    /* CONTACT */
-    .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
-    .contact-info-title{font-family:'Syne',sans-serif;font-size:clamp(1.3rem,2.8vw,2rem);font-weight:800;color:var(--text);margin-bottom:10px;line-height:1.2}
-    .contact-info-sub{font-size:0.88rem;color:var(--muted);line-height:1.65;margin-bottom:18px}
-    .contact-detail-row{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
-    .contact-detail-label{font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.08em;width:72px;flex-shrink:0}
-    .contact-detail-val{font-size:0.88rem;color:var(--text)}
-    .socials{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
-    .social-btn{
-      width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
-      background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--muted);
-      transition:all 0.2s;
-    }
-    .social-btn:hover{background:rgba(0,229,204,0.1);border-color:rgba(0,229,204,0.4);color:var(--teal);transform:translateY(-2px)}
-    .contact-form{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px}
-    .contact-form h3{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:16px}
-    .form-input{
-      width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;
-      color:var(--text);font-family:'Outfit',sans-serif;font-size:0.9rem;
-      padding:12px 16px;outline:none;transition:all 0.2s;margin-bottom:14px;
-    }
-    .form-input::placeholder{color:var(--muted)}
-    .form-input:focus{border-color:rgba(0,229,204,0.4);background:rgba(0,229,204,0.03);box-shadow:0 0 0 3px rgba(0,229,204,0.06)}
-    textarea.form-input{resize:vertical;min-height:120px;line-height:1.6}
-    .form-submit{
-      width:100%;font-weight:600;font-size:0.9rem;letter-spacing:0.06em;text-transform:uppercase;
-      background:var(--teal);color:#060810;padding:14px;border-radius:10px;
-      transition:all 0.2s;box-shadow:0 0 24px rgba(0,229,204,0.3);
-    }
-    .form-submit:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 28px rgba(0,229,204,0.5)}
-    .form-submit:disabled{opacity:0.6;cursor:not-allowed}
-    .sent-msg{text-align:center;padding:10px;color:var(--teal);font-family:'DM Mono',monospace;font-size:0.8rem;margin-top:10px}
-
-    /* FOOTER */
-    .footer{
-      position:relative;z-index:1;max-width:1200px;margin:0 auto;
-      padding:20px max(24px,6vw);
-      border-top:1px solid var(--border);
-      display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
-    }
-    .footer-copy{font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);letter-spacing:0.06em}
-    .footer-tag{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--muted);padding:4px 10px;background:rgba(255,255,255,0.04);border-radius:4px;border:1px solid var(--border)}
-
-    /* FADE IN */
-    .fade-up{opacity:0;transform:translateY(24px);animation:fadeUp 0.7s cubic-bezier(.4,0,.2,1) forwards}
-    @keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
-
-    /* RESPONSIVE */
-    @media(max-width:1024px){
-      .hero{grid-template-columns:1fr;gap:32px;min-height:auto;padding-top:80px}
-      .hero-visual{display:none}
-      .contact-grid{grid-template-columns:1fr}
-      .profile-floating{display:none}
-    }
-    @media(max-width:768px){
-      .nav-links,.nav-cta{display:none}
-      .hamburger{display:flex}
-      .tl-item{grid-template-columns:70px 1fr;gap:0 16px}
-      .tl-dot,.tl-line{left:70px}
-      .tl-right{padding-left:20px}
-      .section{padding:40px max(16px,4vw) 28px}
-    }
-    @media(max-width:480px){
-      .hero-stats{grid-template-columns:repeat(2,1fr)}
-      .tl-left{display:none}
-      .tl-item{grid-template-columns:1fr}
-      .tl-dot,.tl-line{display:none}
-      .tl-right{padding-left:0}
-      .section{padding:32px 16px 24px}
-    }
-  `}</style>
-);
 
 /* ── Social Icon ──────────────────────────────────────────────────── */
 function SocialIcon({ name }) {
@@ -619,9 +179,6 @@ export default function Portfolio() {
 
   return (
     <>
-      <FontLink />
-      <GlobalStyles />
-
       {/* Orbs */}
       <div className="orb orb-1"/><div className="orb orb-2"/><div className="orb orb-3"/>
 
@@ -692,7 +249,7 @@ export default function Portfolio() {
                 <div className="profile-status">
                   <div className="status-row"><span>Location</span><strong>{content.contact?.location||"Remote / Hybrid"}</strong></div>
                   <div className="status-row"><span>Focus</span><strong>Cloud · Network · AI</strong></div>
-                  <div className="status-row"><span>Status</span><strong style={{color:"#22c55e"}}>● Open to impact</strong></div>
+                  <div className="status-row"><span>Status</span><strong className="status-open">● Open to impact</strong></div>
                 </div>
               </div>
               <div className="profile-floating">
@@ -712,13 +269,13 @@ export default function Portfolio() {
             <SH n="02" label="Skills"/>
             <div className="skills-grid">
               {Object.keys(skillGroups).map((cat,ci)=>{
-                const col = SKILL_COLORS[ci%SKILL_COLORS.length];
+                const colClass = `col-${ci % SKILL_COLOR_COUNT}`;
                 return (
-                  <div key={cat} className="skill-card">
-                    <div className="skill-cat" style={{color:col}}>{cat}</div>
+                  <div key={cat} className={`skill-card ${colClass}`}>
+                    <div className={`skill-cat ${colClass}`}>{cat}</div>
                     <div className="skill-pills">
                       {skillGroups[cat].map((sk,si)=>(
-                        <span key={si} className="skill-pill" style={{color:col,borderColor:`${col}40`,background:`${col}10`}}>
+                        <span key={si} className={`skill-pill ${colClass}`}>
                           {sk.name}{sk.level?` · ${sk.level}`:""}
                         </span>
                       ))}
@@ -736,8 +293,8 @@ export default function Portfolio() {
         <div className="section">
           <section id="Projects">
             <SH n="03" label="Projects from GitHub"/>
-            {loading && <p style={{color:"var(--muted)"}}>Loading projects…</p>}
-            {!loading && repos.length===0 && <p style={{color:"var(--muted)"}}>No projects found.</p>}
+            {loading && <p className="muted-text">Loading projects…</p>}
+            {!loading && repos.length===0 && <p className="muted-text">No projects found.</p>}
             <div className="projects-grid">
               {repos.map(r=>(
                 <div key={r.id} className="project-card fade-up">
@@ -767,7 +324,7 @@ export default function Portfolio() {
                     <div className="tl-date">{formatEduRange(edu)}</div>
                   </div>
                   <div className="tl-line"/>
-                  <div className="tl-dot" style={{borderColor:"var(--teal)",color:"var(--teal)"}}>{edu.degree?.slice(0,2)||"ED"}</div>
+                  <div className="tl-dot tl-dot-edu">{edu.degree?.slice(0,2)||"ED"}</div>
                   <div className="tl-right">
                     <div className="tl-card">
                       <div className="tl-title">{edu.degree}</div>
@@ -775,7 +332,7 @@ export default function Portfolio() {
                       {edu.skills && (
                         <div className="tl-chips">
                           {parseCommaList(edu.skills).map((sk,si)=>(
-                            <span key={si} className="tl-chip" style={{color:TAG_COLORS[si%TAG_COLORS.length],borderColor:`${TAG_COLORS[si%TAG_COLORS.length]}40`,background:`${TAG_COLORS[si%TAG_COLORS.length]}10`}}>{sk}</span>
+                            <span key={si} className={`tl-chip tag-${si % TAG_COLOR_COUNT}`}>{sk}</span>
                           ))}
                         </div>
                       )}
@@ -800,12 +357,12 @@ export default function Portfolio() {
                     <div className="tl-date">{exp.duration}</div>
                   </div>
                   <div className="tl-line"/>
-                  <div className="tl-dot" style={{borderColor:"var(--amber)",color:"var(--amber)"}}>{exp.title?.slice(0,2)||"EX"}</div>
+                  <div className="tl-dot tl-dot-exp">{exp.title?.slice(0,2)||"EX"}</div>
                   <div className="tl-right">
                     <div className="tl-card">
                       <div className="tl-title">{exp.title}</div>
                       <div className="tl-sub">{exp.company}</div>
-                      {exp.responsibilities && <p style={{marginTop:10,fontSize:"0.85rem",color:"var(--muted)",lineHeight:1.6}}>{exp.responsibilities}</p>}
+                      {exp.responsibilities && <p className="exp-notes">{exp.responsibilities}</p>}
                     </div>
                   </div>
                 </div>
@@ -820,7 +377,7 @@ export default function Portfolio() {
         <div className="section">
           <section id="Research">
             <SH n="06" label="Research"/>
-            {(content.research||[]).length===0 && <p style={{color:"var(--muted)"}}>No research papers added yet.</p>}
+            {(content.research||[]).length===0 && <p className="muted-text">No research papers added yet.</p>}
             <div className="research-grid">
               {(content.research||[]).map((r,i)=>(
                 <div key={i} className="research-card fade-up">
@@ -865,8 +422,8 @@ export default function Portfolio() {
         <div className="section">
           <section id="Resources">
             <SH n="08" label="Resources"/>
-            {loading && <p style={{color:"var(--muted)"}}>Loading resources…</p>}
-            {!loading && resourceRepos.length===0 && <p style={{color:"var(--muted)"}}>No PDFs or Notes found on GitHub.</p>}
+            {loading && <p className="muted-text">Loading resources…</p>}
+            {!loading && resourceRepos.length===0 && <p className="muted-text">No PDFs or Notes found on GitHub.</p>}
             <div className="resources-grid">
               {resourceRepos.map(res=>(
                 <div key={res.id} className="resource-card">
@@ -885,14 +442,14 @@ export default function Portfolio() {
 
       {/* ── RESUME ───────────────────────────────────────────────── */}
       {vis.Resume && (
-        <div style={{padding:"0 max(24px,6vw)",maxWidth:600,margin:"0 auto"}}>
+        <div className="resume-wrap">
           <section id="Resume">
             <SH n="09" label="Resume"/>
             <div className="resume-card">
               <div className="resume-icon">📄</div>
               <div className="resume-title">My Resume</div>
               <div className="resume-sub">Download my complete resume to learn more about my background, skills, and experience.</div>
-              <a className="btn-primary" href={content.resume.url} target="_blank" rel="noreferrer" style={{display:"inline-block",textDecoration:"none"}}>
+              <a className="btn-primary resume-link" href={content.resume.url} target="_blank" rel="noreferrer">
                 Download Resume ↓
               </a>
             </div>
