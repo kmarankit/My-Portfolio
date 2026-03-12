@@ -9,6 +9,7 @@ const NAV_SECTIONS = [
   { id: 'education',   label: 'Education',    icon: '🎓'  },
   { id: 'experience',  label: 'Experience',   icon: '💼'  },
   { id: 'research',    label: 'Research',     icon: '🔬'  },
+  { id: 'resources',   label: 'Resources',    icon: '📦'  },
   { id: 'contact',     label: 'Contact',      icon: '✉️'  },
   { id: 'resume',      label: 'Resume',       icon: '📄'  },
   { id: 'certif',      label: 'Certification',icon: '🏆'  },
@@ -380,8 +381,8 @@ const SectionContent = ({
       </Card>
     );
 
-    case 'research': return (
-      <Card title="research">
+    case 'resources': return (
+      <Card title="Resources">
         <select
           value={drafts.resource.type}
           onChange={(e) => setDrafts((prev) => ({ ...prev, resource: { ...prev.resource, type: e.target.value } }))}
@@ -418,16 +419,16 @@ const SectionContent = ({
         />
         <button
           style={btnStyle}
-          onClick={() => onAddItem('research', drafts.resource, () => setDrafts((prev) => ({ ...prev, resource: { type: '', title: '', publication: '', identifier: '', url: '' } })))}
+          onClick={() => onAddItem('resources', drafts.resource, () => setDrafts((prev) => ({ ...prev, resource: { type: '', title: '', publication: '', identifier: '', url: '' } })))}
         >
           Add Resource
         </button>
-        {(content.research || []).map((r, i) => (
+        {(content.resources || []).map((r, i) => (
           <div key={`${r.title}-${i}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
             <span style={{ color: '#cbd5e1', fontSize: 13 }}>
               {r.type} • {r.title}{r.publication ? ` • ${r.publication}` : ''}{r.identifier ? ` • ${r.identifier}` : ''}
             </span>
-            <button style={{ ...btnStyle, width: 80, padding: '6px 10px' }} onClick={() => onRemoveItem('research', i)}>Remove</button>
+            <button style={{ ...btnStyle, width: 80, padding: '6px 10px' }} onClick={() => onRemoveItem('resources', i)}>Remove</button>
           </div>
         ))}
       </Card>
@@ -586,10 +587,10 @@ const DEFAULT_CONTENT = {
     education: [],
     experience: [],
     research: [],
+    resources: [],
     contact: { email: '', phone: '', location: '' },
     resume: { url: '' },
     certif: [],
-    research: [],
     social: { github: '', linkedin: '', twitter: '', instagram: '', youtube: '' },
 };
 const DEFAULT_DRAFTS = {
