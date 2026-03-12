@@ -177,6 +177,16 @@ export default function Portfolio() {
     } catch { setSent(false); } finally { setSending(false); }
   };
 
+  const handleResumeClick = () => {
+    if (window.gtag) {
+      window.gtag("event", "resume_download", {
+        event_category: "engagement",
+        event_label: "resume",
+        value: 1,
+      });
+    }
+  };
+
   return (
     <>
       {/* Orbs */}
@@ -449,7 +459,7 @@ export default function Portfolio() {
               <div className="resume-icon">📄</div>
               <div className="resume-title">My Resume</div>
               <div className="resume-sub">Download my complete resume to learn more about my background, skills, and experience.</div>
-              <a className="btn-primary resume-link" href={content.resume.url} target="_blank" rel="noreferrer">
+              <a className="btn-primary resume-link" href={content.resume.url} target="_blank" rel="noreferrer" onClick={handleResumeClick}>
                 Download Resume ↓
               </a>
             </div>
