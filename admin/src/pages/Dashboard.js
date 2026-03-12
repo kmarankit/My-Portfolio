@@ -628,8 +628,11 @@ const Dashboard = () => {
 
     try {
         console.log("Uploading to Cloudinary...");
-        const response = await fetch(
-            `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
+    const resourceType =
+      section === "photo" ? "image" : section === "resume" ? "raw" : "auto";
+
+    const response = await fetch(
+            `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`,
             { method: "POST", body: formData }
         );
 
